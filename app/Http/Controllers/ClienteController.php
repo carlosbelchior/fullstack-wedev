@@ -5,10 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreClienteRequest;
 use App\Http\Requests\UpdateClienteRequest;
 use App\Models\Cliente;
-use GuzzleHttp\Client;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 
 class ClienteController extends Controller
 {
@@ -91,7 +87,7 @@ class ClienteController extends Controller
     /**
      * API de exclusão do cliente
      */
-    public function destroy($id)
+    public function exclusao($id)
     {
         $cliente = Cliente::find($id);
 
