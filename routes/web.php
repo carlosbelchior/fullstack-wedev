@@ -3,6 +3,7 @@
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ProdutoController;
+use App\Http\Controllers\SpaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,21 +17,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('clientes')->controller(ClienteController::class)->group(function () {
-    Route::get('/', 'lista')->name('cliente.lista');
-    Route::get('/gerenciar/{id?}', 'formulario')->name('cliente.gerenciar');
-});
-
-Route::prefix('produtos')->controller(ProdutoController::class)->group(function () {
-    Route::get('/', 'lista')->name('produto.lista');
-    Route::get('/gerenciar/{id?}', 'formulario')->name('produto.gerenciar');
-});
-
-Route::prefix('pedidos')->controller(PedidoController::class)->group(function () {
-    Route::get('/', 'lista')->name('pedido.lista');
-    Route::get('/gerenciar/{id?}', 'formulario')->name('pedido.gerenciar');
-});
-
-Route::get('/', function () {
-    return view('clientes.lista');
-});
+Route::get('/{any}', [SpaController::class, 'index'])->where('any', '.*');
