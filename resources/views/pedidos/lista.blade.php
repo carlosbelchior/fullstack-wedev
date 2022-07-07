@@ -10,15 +10,11 @@
                     <a class="btn btn-primary btn-sm" href="{{ route('cliente.gerenciar') }}">+</a>
                 </div>
 
-                <div class="card-body" id="listaClientes">
+                <div class="card-body">
                     <lista-clientes></lista-clientes>
                 </div>
             </div>
         </div>
     </div>
 </div>
-@endsection
-
-@section('scriptsVue')
-    <script src="{!! asset('js/cliente/lista.js') !!}"></script>
 @endsection
