@@ -2,83 +2,97 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreProdutoRequest;
+use App\Http\Requests\UpdateProdutoRequest;
+use App\Models\Produto;
 
 class ProdutoController extends Controller
 {
+
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * API de retorno de todos os Produtos
      */
-    public function index()
+    public function todos()
     {
-        //
+        return response()->json(['produto' => Produto::all(), 'tipo' => 'dados'], 200);
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Página de formulário de cadastro e edição
      */
-    public function create()
+    public function formulario()
     {
-        //
+        return view('Produtos.formulario');
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * API de cadastro de Produto
      */
-    public function store(Request $request)
+    public function cadastro(StoreProdutoRequest $request)
     {
-        //
+        // Salva o Produto
+        $produto = Produto::create($request->validated());
+        if($produto)
+            return response()->json(['mensagem' => 'Produto cadastrado com sucesso', 'tipo' => 'sucesso'], 200);
+
+        // Erro geral
+        return response()->json(['mensagem' => 'Ocorreu um erro ao salvar o Produto, verifique sua conexão e tente novamente!', 'tipo' => 'geral'], 400);
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Página de exiibição do Produto
      */
-    public function show($id)
+    public function detalhes()
     {
-        //
+       return view('Produtos.Produto');
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * API de busca do Produto
      */
-    public function edit($id)
+    public function encontrar($id)
     {
-        //
+        // Busca o Produto
+        if(Produto::find($id))
+            return response()->json(['Produto' => Produto::with('pedidos')->find($id), 'tipo' => 'dados'], 200);
+
+        // Erro geral
+        return response()->json(['mensagem' => 'Produto não encontrado.', 'tipo' => 'geral'], 400);
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * API de atualização do Produto
      */
-    public function update(Request $request, $id)
+    public function atualizar(UpdateProdutoRequest $request, $id)
     {
-        //
+        $produto =  Produto::find($id);
+        if(!$produto)
+            return response()->json(['mensagem' => 'Produto não encontrado.', 'tipo' => 'geral'], 400);
+
+        // Atualiza o Produto
+        if($produto->update(array_filter($request->validated())))
+            return response()->json(['mensagem' => 'Produto atualizado com sucesso.', 'tipo' => 'sucesso'], 200);
+
+        // Erro geral
+        return response()->json(['mensagem' => 'Ocorreu um erro ao editar o Produto, verifique sua conexão e tente novamente.', 'tipo' => 'geral'], 400);
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * API de exclusão do Produto
      */
-    public function destroy($id)
+    public function exclusao($id)
     {
-        //
+        $produto = Produto::find($id);
+
+        // Verifica se o Produto existe
+        if(!$produto)
+            return response()->json(['mensagem' => 'Produto não encontrado.', 'tipo' => 'geral'], 400);
+
+        // Deleta o Produto
+        if($produto->delete())
+            return response()->json(['mensagem' => 'Produto deletado com sucesso', 'tipo' => 'sucesso'], 200);
+
+        // Erro geral
+        return response()->json(['mensagem' => 'Ocorreu um erro ao editar o Produto, verifique sua conexão e tente novamente.', 'tipo' => 'geral'], 400);
     }
 }

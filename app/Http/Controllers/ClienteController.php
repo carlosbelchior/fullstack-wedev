@@ -9,14 +9,6 @@ use App\Models\Cliente;
 class ClienteController extends Controller
 {
     /**
-     * Página de listagem de clientes
-     */
-    public function lista()
-    {
-        return view('clientes.lista');
-    }
-
-    /**
      * API de retorno de todos os clientes
      */
     public function todos()
@@ -35,7 +27,7 @@ class ClienteController extends Controller
     /**
      * API de cadastro de cliente
      */
-    public function cadastro(StoreClienteRequest  $request)
+    public function cadastro(StoreClienteRequest $request)
     {
         // Salva o cliente
         $cliente = Cliente::create($request->validated());

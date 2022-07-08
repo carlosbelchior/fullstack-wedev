@@ -20,7 +20,7 @@
 </template>
 
 <script>
-    import { computed, reactive } from "vue";
+    import { computed } from "vue";
     import { useStore } from "vuex";
     import axios from "axios";
     import Swal from 'sweetalert2'
