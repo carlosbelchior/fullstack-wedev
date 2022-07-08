@@ -5,6 +5,7 @@ import Dashboard from "../pages/Dashboard.vue";
 import Clientes from "../pages/Clientes.vue";
 import ClientesFormulario from "../pages/ClientesFormulario.vue";
 import Produtos from "../pages/Produtos.vue";
+import ProdutosFormulario from "../pages/ProdutosFormulario.vue";
 import Pedidos from "../pages/Pedidos.vue";
 
 // WebHistory
@@ -41,6 +42,14 @@ const routes = [
         name: "produtos",
         meta: {
             title: "Produtos",
+        },
+    },
+    {
+        path: "/produtos/gerenciar/:id?",
+        component: ProdutosFormulario,
+        name: "produtos-formulario",
+        meta: {
+            title: "Gerenciar Produto",
         },
     },
     {

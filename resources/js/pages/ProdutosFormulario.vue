@@ -3,19 +3,19 @@
     <div class="row justify-content-center">
         <div class="col-md-10">
 
-            {{ cliente }}
+            {{ produto }}
 
-            <b-alert show dismissible variant="danger" v-if="form.erro">Cliente não encontrado!</b-alert>
+            <b-alert show dismissible variant="danger" v-if="form.erro">Produto não encontrado!</b-alert>
 
             <b-alert show dismissible variant="danger" v-if="form.erroValidacao" v-for="erro in form.erroValidacao">{{ erro[0] }}</b-alert>
 
             <div class="card">
                 <div class="card-header">
-                    Gerenciar cliente
+                    Gerenciar produto
                 </div>
 
                 <div class="card-body">
-                    <form method="POST" @submit.prevent="salvarCliente()">
+                    <form method="POST" @submit.prevent="salvarproduto()">
 
                         <div class="row mb-3">
                             <label class="col-md-3 col-form-label text-md-end">Nome</label>
@@ -25,23 +25,23 @@
                         </div>
 
                         <div class="row mb-3">
-                            <label class="col-md-3 col-form-label text-md-end">CPF</label>
+                            <label class="col-md-3 col-form-label text-md-end">Código de barras</label>
                             <div class="col-md-6">
-                                <input type="text" class="form-control" name="cpf" required autocomplete="false" autofocus v-model="form.cpf">
+                                <input type="text" class="form-control" minlength="20" maxlength="20" name="cod_barras" required autocomplete="false" autofocus v-model="form.cod_barras">
                             </div>
                         </div>
 
                         <div class="row mb-3">
-                            <label class="col-md-3 col-form-label text-md-end">E-mail</label>
+                            <label class="col-md-3 col-form-label text-md-end">Preço</label>
                             <div class="col-md-6">
-                                <input type="email" class="form-control" name="email" required autocomplete="false" autofocus  v-model="form.email">
+                                <input class="form-control" minlength="20" maxlength="20" name="cod_barras" required autocomplete="false" autofocus v-model.lazy="form.valor_unitario" v-money3="config">
                             </div>
                         </div>
 
                         <div class="row mb-0">
                             <div class="col-md-3 offset-md-5">
                                 <button type="submit" class="btn btn-primary">
-                                    Salvar cliente
+                                    Salvar produto
                                 </button>
                             </div>
                         </div>
@@ -59,7 +59,7 @@
     import { useRoute } from "vue-router";
     import { useStore } from "vuex";
     import axios from "axios";
-    import Swal from 'sweetalert2'
+    import Swal from 'sweetalert2';
     export default {
         setup() {
             //   posts are loaded from init function
@@ -69,64 +69,76 @@
             const form = reactive({
                 id: '',
                 nome: '',
-                cpf: '',
-                email: '',
+                cod_barras: '',
+                valor_unitario: '',
                 erro: false,
                 erroValidacao: null
             })
 
-            const cliente = computed(() => {
+            const produto = computed(() => {
                 form.erroValidacao = null;
                 form.erro = false;
 
                 if(route.params.id === ""){}
-                else if(route.params.id != "" && store.state.cliente.clientes.find(todo => todo.id == route.params.id))
+                else if(route.params.id != "" && store.state.produto.produtos.find(todo => todo.id == route.params.id))
                 {
-                    form.id = store.state.cliente.clientes.find(todo => todo.id == route.params.id).id;
-                    form.nome = store.state.cliente.clientes.find(todo => todo.id == route.params.id).nome;
-                    form.cpf = store.state.cliente.clientes.find(todo => todo.id == route.params.id).cpf;
-                    form.email = store.state.cliente.clientes.find(todo => todo.id == route.params.id).email;
+                    form.id = store.state.produto.produtos.find(todo => todo.id == route.params.id).id;
+                    form.nome = store.state.produto.produtos.find(todo => todo.id == route.params.id).nome;
+                    form.cod_barras = store.state.produto.produtos.find(todo => todo.id == route.params.id).cod_barras;
+                    form.valor_unitario = store.state.produto.produtos.find(todo => todo.id == route.params.id).valor_unitario;
                 }
                 else
                     form.erro = true;
             })
 
-            function salvarCliente() {
+            function salvarproduto() {
 
                 var $this = this;
                 form.erroValidacao = null;
                 form.erro = false;
 
                 if(!this.form.id)
-                    axios.post('/api/clientes/cadastro', this.form).then(function (response) {
+                    axios.post('/api/produtos/cadastro', this.form).then(function (response) {
                         $this.form.id = '';
                         $this.form.nome = '';
-                        $this.form.cpf = '';
-                        $this.form.email = '';
-                        Swal.fire('Feito!', 'Cliente cadastrado com sucesso!', 'success')
-                        store.commit("cliente/fetchClientes");
+                        $this.form.cod_barras = '';
+                        $this.form.valor_unitario = '';
+                        Swal.fire('Feito!', 'Produto cadastrado com sucesso!', 'success')
+                        store.commit("produto/fetchProdutos");
                     }).catch(function (error) {
                         $this.form.erroValidacao = error.response.data.mensagem
                     });
                 else
-                    axios.post('/api/clientes/atualizar/' + this.form.id, this.form).then(function (response) {
-                        Swal.fire('Feito!', 'Cliente atualizado com sucesso!', 'success')
-                        store.commit("cliente/fetchClientes");
+                    axios.post('/api/produtos/atualizar/' + this.form.id, this.form).then(function (response) {
+                        Swal.fire('Feito!', 'Produto atualizado com sucesso!', 'success')
+                        store.commit("produto/fetchProdutos");
                     }).catch(function (error) {
                         $this.form.erroValidacao = error.response.data.mensagem
                     });
-
-                console.log($this.form.sucessoAtualizacao);
 			}
 
             return {
                 store,
                 form,
-                cliente,
+                produto,
                 route,
-                salvarCliente,
+                salvarproduto,
+                config: {
+                    prefix: '',
+                    suffix: '',
+                    thousands: '',
+                    decimal: '.',
+                    precision: 2,
+                    disableNegative: true,
+                    disabled: false,
+                    min: 0.00,
+                    max: 9999999999.99,
+                    allowBlank: false,
+                    minimumNumberOfCharacters: 1,
+                }
             };
         },
+
     };
 </script>
 

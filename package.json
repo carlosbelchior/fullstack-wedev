@@ -17,6 +17,7 @@
         "bootstrap-vue": "^2.22.0",
         "bootstrap-vue-3": "^0.1.14",
         "sweetalert2": "^11.4.20",
+        "v-money3": "^3.21.0",
         "vue": "^3.2.37",
         "vue-router": "^4.1.1",
         "vuex": "^4.0.2"
