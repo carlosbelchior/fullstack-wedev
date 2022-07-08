@@ -2,83 +2,104 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreClienteRequest;
+use App\Http\Requests\UpdateClienteRequest;
+use App\Models\Cliente;
 
 class ClienteController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Página de listagem de clientes
      */
-    public function index()
+    public function lista()
     {
-        //
+        return view('clientes.lista');
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * API de retorno de todos os clientes
      */
-    public function create()
+    public function todos()
     {
-        //
+        return response()->json(['cliente' => Cliente::all(), 'tipo' => 'dados'], 200);
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * Página de formulário de cadastro e edição
      */
-    public function store(Request $request)
+    public function formulario()
     {
-        //
+        return view('clientes.formulario');
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * API de cadastro de cliente
      */
-    public function show($id)
+    public function cadastro(StoreClienteRequest  $request)
     {
-        //
+        // Salva o cliente
+        $cliente = Cliente::create($request->validated());
+        if($cliente)
+            return response()->json(['mensagem' => 'Cliente cadastrado com sucesso', 'tipo' => 'sucesso'], 200);
+
+        // Erro geral
+        return response()->json(['mensagem' => 'Ocorreu um erro ao salvar o cliente, verifique sua conexão e tente novamente!', 'tipo' => 'geral'], 400);
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Página de exiibição do cliente
      */
-    public function edit($id)
+    public function detalhes()
     {
-        //
+       return view('clientes.cliente');
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * API de busca do cliente
      */
-    public function update(Request $request, $id)
+    public function encontrar($id)
     {
-        //
+        // Busca o cliente
+        if(Cliente::find($id))
+            return response()->json(['cliente' => Cliente::with('pedidos')->find($id), 'tipo' => 'dados'], 200);
+
+        // Erro geral
+        return response()->json(['mensagem' => 'Cliente não encontrado.', 'tipo' => 'geral'], 400);
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * API de atualização do cliente
      */
-    public function destroy($id)
+    public function atualizar(UpdateClienteRequest $request, $id)
     {
-        //
+        $cliente =  Cliente::find($id);
+        if(!$cliente)
+            return response()->json(['mensagem' => 'Cliente não encontrado.', 'tipo' => 'geral'], 400);
+
+        // Atualiza o cliente
+        if($cliente->update(array_filter($request->validated())))
+            return response()->json(['mensagem' => 'Cliente atualizado com sucesso.', 'tipo' => 'sucesso'], 200);
+
+        // Erro geral
+        return response()->json(['mensagem' => 'Ocorreu um erro ao editar o cliente, verifique sua conexão e tente novamente.', 'tipo' => 'geral'], 400);
+    }
+
+    /**
+     * API de exclusão do cliente
+     */
+    public function exclusao($id)
+    {
+        $cliente = Cliente::find($id);
+
+        // Verifica se o cliente existe
+        if(!$cliente)
+            return response()->json(['mensagem' => 'Cliente não encontrado.', 'tipo' => 'geral'], 400);
+
+        // Deleta o cliente
+        if($cliente->delete())
+            return response()->json(['mensagem' => 'Cliente deletado com sucesso', 'tipo' => 'sucesso'], 200);
+
+        // Erro geral
+        return response()->json(['mensagem' => 'Ocorreu um erro ao editar o cliente, verifique sua conexão e tente novamente.', 'tipo' => 'geral'], 400);
     }
 }
