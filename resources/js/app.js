@@ -16,7 +16,6 @@ import router from "./router";
 import store from "./store";
 
 // Initial Setup -> You can emit an actions from store to load the data
-
 init();
 
 // root app instance

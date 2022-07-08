@@ -13,7 +13,7 @@ const getters = {
 
 const mutations = {
     async fetchClientes(state) {
-        axios.get("http://localhost:8080/api/clientes/todos")
+        axios.get("/api/clientes/todos")
             .then((response) => {
                 state.clientes = response.data.cliente;
             })
