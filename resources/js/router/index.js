@@ -53,11 +53,19 @@ const routes = [
         },
     },
     {
-        path: "/posts",
+        path: "/pedidos",
         component: Pedidos,
         name: "pedidos",
         meta: {
             title: "Pedidos",
+        },
+    },
+    {
+        path: "/pedidos/gerenciar/:id?",
+        component: ProdutosFormulario,
+        name: "pedidos-formulario",
+        meta: {
+            title: "Gerenciar Pedido",
         },
     },
 ];

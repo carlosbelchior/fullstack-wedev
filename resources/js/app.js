@@ -3,8 +3,8 @@ import { createApp } from "vue";
 // Root App
 import App from "./components/App.vue";
 import init from "./helpers/init.js";
-import BootstrapVue3 from 'bootstrap-vue-3'
-import money from 'v-money3'
+import BootstrapVue3 from 'bootstrap-vue-3';
+import money from 'v-money3';
 
 // Import Bootstrap and BootstrapVue CSS files (order is important)
 import 'bootstrap/dist/css/bootstrap.css'

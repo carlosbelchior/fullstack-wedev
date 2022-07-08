@@ -9,8 +9,8 @@ class Pedido extends Model
 {
     use HasFactory;
     protected $table = 'pedidos';
-    protected $fillable = ['data_pedido'];
-    protected $hidden = ['cliente_id', 'created_at', 'updated_at'];
+    protected $fillable = ['data_pedido', 'cliente_id'];
+    protected $hidden = ['created_at', 'updated_at'];
 
     public function cliente()
     {

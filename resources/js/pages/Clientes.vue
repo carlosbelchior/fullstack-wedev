@@ -37,7 +37,7 @@
                     Swal.fire('Feito!', 'Cliente excluido com sucesso!', 'success')
                     store.commit("cliente/fetchClientes");
                 }).catch(function (error) {
-                    Swal.fire('Opa!', 'Erro ao excluir o cliente!', 'danger')
+                    Swal.fire('Opa!', 'Erro ao excluir o cliente!', 'error')
                     console.error(error);
                     store.commit("cliente/fetchClientes");
                 });
