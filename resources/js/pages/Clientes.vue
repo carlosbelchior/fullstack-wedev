@@ -24,6 +24,7 @@
     import { useStore } from "vuex";
     import axios from "axios";
     import Swal from 'sweetalert2'
+    import init from '../helpers/init'
     export default {
         setup() {
             const store = useStore();
@@ -35,12 +36,12 @@
                 var $this = this;
                 axios.get('/api/clientes/exclusao/' + cliente_id).then(function (response) {
                     Swal.fire('Feito!', 'Cliente excluido com sucesso!', 'success')
-                    store.commit("cliente/fetchClientes");
                 }).catch(function (error) {
                     Swal.fire('Opa!', 'Erro ao excluir o cliente!', 'error')
                     console.error(error);
-                    store.commit("cliente/fetchClientes");
                 });
+
+                init();
 
             }
 

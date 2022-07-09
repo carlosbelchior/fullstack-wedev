@@ -6,7 +6,7 @@ const state = {
 };
 
 const getters = {
-    getCliente: (state) => (id) => {
+    getProduto: (state) => (id) => {
         return state.produtos.find(todo => todo.id === id)
     }
 }

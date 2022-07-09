@@ -15,12 +15,11 @@ return new class extends Migration
     {
         Schema::create('pedidos_produtos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pedido_id')->cascadeOnUpdate()->cascadeOnDelete()->constrained('pedidos');
-            $table->foreignId('produto_id')->cascadeOnUpdate()->cascadeOnDelete()->constrained('produtos');
+            $table->foreignId('pedido_id')->constrained('pedidos')->onDelete('cascade');;
+            $table->foreignId('produto_id')->constrained('produtos')->onDelete('cascade');;
             $table->integer('quantidade');
             $table->timestamps();
         });
-        Schema::enableForeignKeyConstraints();
     }
 
     /**

@@ -15,7 +15,7 @@ class PedidoController extends Controller
      */
     public function todos()
     {
-        return response()->json(['pedido' => Pedido::with(['cliente'])->get(), 'tipo' => 'dados'], 200);
+        return response()->json(['pedido' => Pedido::with(['cliente', 'produtos'])->get(), 'tipo' => 'dados'], 200);
     }
 
     /**

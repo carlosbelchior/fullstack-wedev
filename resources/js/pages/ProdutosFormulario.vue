@@ -18,23 +18,23 @@
                     <form method="POST" @submit.prevent="salvarproduto()">
 
                         <div class="row mb-3">
-                            <label class="col-md-3 col-form-label text-md-end">Nome</label>
+                            <label class="col-md-3 col-form-label text-md-end">Nome <span class="text-danger">*</span></label>
                             <div class="col-md-6">
                                 <input type="text" class="form-control" name="nome" required autocomplete="false" autofocus v-model="form.nome">
                             </div>
                         </div>
 
                         <div class="row mb-3">
-                            <label class="col-md-3 col-form-label text-md-end">Código de barras</label>
+                            <label class="col-md-3 col-form-label text-md-end">Código de barras <span class="text-danger">*</span></label>
                             <div class="col-md-6">
                                 <input type="text" class="form-control" minlength="20" maxlength="20" name="cod_barras" required autocomplete="false" autofocus v-model="form.cod_barras">
                             </div>
                         </div>
 
                         <div class="row mb-3">
-                            <label class="col-md-3 col-form-label text-md-end">Preço</label>
+                            <label class="col-md-3 col-form-label text-md-end">Preço <span class="text-danger">*</span></label>
                             <div class="col-md-6">
-                                <input class="form-control" minlength="20" maxlength="20" name="cod_barras" required autocomplete="false" autofocus v-model.lazy="form.valor_unitario" v-money3="config">
+                                <input class="form-control" minlength="20" maxlength="20" name="preco" required autocomplete="false" autofocus v-model.lazy="form.valor_unitario" v-money3="config">
                             </div>
                         </div>
 

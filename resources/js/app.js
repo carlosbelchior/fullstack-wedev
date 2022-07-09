@@ -6,6 +6,7 @@ import init from "./helpers/init.js";
 import BootstrapVue3 from 'bootstrap-vue-3';
 import money from 'v-money3';
 
+
 // Import Bootstrap and BootstrapVue CSS files (order is important)
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue-3/dist/bootstrap-vue-3.css'
@@ -24,3 +25,4 @@ const app = createApp(App);
 
 // Mountin an app
 app.use(money).use(BootstrapVue3).use(store).use(router).mount("#app");
+

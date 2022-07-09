@@ -21,7 +21,7 @@
             </template>
 
             <template #cell(cliente)="data">
-                {{ data.value.nome }}
+                {{ data.value.nome }} - <router-link target="_blank" class="" :to="{ name: 'clientes-formulario', params: { id: data.item.cliente_id }}">Ver cliente</router-link>
             </template>
 
             <template v-slot:cell(acao)="{ item }">
