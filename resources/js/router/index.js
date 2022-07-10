@@ -7,6 +7,7 @@ import ClientesFormulario from "../pages/ClientesFormulario.vue";
 import Produtos from "../pages/Produtos.vue";
 import ProdutosFormulario from "../pages/ProdutosFormulario.vue";
 import Pedidos from "../pages/Pedidos.vue";
+import PedidosFormulario from "../pages/PedidosFormulario.vue";
 
 // WebHistory
 const history = createWebHistory();
@@ -53,11 +54,19 @@ const routes = [
         },
     },
     {
-        path: "/posts",
+        path: "/pedidos",
         component: Pedidos,
         name: "pedidos",
         meta: {
             title: "Pedidos",
+        },
+    },
+    {
+        path: "/pedidos/gerenciar/:id?",
+        component: PedidosFormulario,
+        name: "pedidos-formulario",
+        meta: {
+            title: "Gerenciar Pedido",
         },
     },
 ];

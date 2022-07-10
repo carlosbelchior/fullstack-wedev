@@ -1,22 +1,48 @@
 <template>
-  <div class="container">
+    <div class="container">
 
-    <router-link class="btn btn-primary mb-3" to="/clientes/gerenciar/">+ Novo cliente</router-link>
-    <b-table
-        striped
-        hover
-        responsive="sm"
-        :items="clientes"
-        :fields="fields"
-        :sort-by.sync="sortBy"
-        :sort-desc.sync="sortDesc"
-        sort-icon-left>
-        <template v-slot:cell(acao)="{ item }">
-            <router-link class="btn btn-primary btn-sm" :to="{ name: 'clientes-formulario', params: { id: item.id }}">Editar</router-link>
-            <button class="btn btn-danger btn-sm" @click="excluirCliente(item.id)">Excluir</button>
-        </template>
-    </b-table>
-  </div>
+        <router-link class="btn btn-primary mb-3" to="/clientes/gerenciar/">+ Novo cliente</router-link>
+
+        <VTable class="table table-striped table-responsive table-bordered"
+        :data="clientes"
+        :filters="filters"
+        :page-size="20"
+        v-model:currentPage="currentPage"
+        @totalPagesChanged="totalPages = $event"
+        >
+            <template #head>
+                <tr>
+                    <VTh class="col-1" sortKey="id">ID</VTh>
+                    <VTh class="col-3" sortKey="nome">Nome</VTh>
+                    <VTh class="col-2" sortKey="cpf">CPF</VTh>
+                    <VTh class="col-4" sortKey="email">E-mail</VTh>
+                    <th class="col-2">Ação</th>
+                </tr>
+            </template>
+            <template #body="{rows}">
+                <tr>
+                    <td><input type="text" class="form-control form-control-sm" autocomplete="false" v-model="filters.id.value"/></td>
+                    <td><input type="text" class="form-control form-control-sm" autocomplete="false" v-model="filters.nome.value"/></td>
+                    <td><input type="text" class="form-control form-control-sm" autocomplete="false" v-model="filters.cpf.value"/></td>
+                    <td><input type="text" class="form-control form-control-sm" autocomplete="false" v-model="filters.email.value"/></td>
+                    <td></td>
+                </tr>
+                <tr v-for="row in rows" :key="row.id">
+                    <td>{{ row.id }}</td>
+                    <td>{{ row.nome }}</td>
+                    <td>{{ row.cpf }}</td>
+                    <td>{{ row.email }}</td>
+                    <td>
+                        <router-link class="btn btn-primary btn-sm" :to="{ name: 'clientes-formulario', params: { id: row.id }}">Editar</router-link>
+                        <button class="btn btn-danger btn-sm mx-2" @click="excluirCliente(row.id)">Excluir</button>
+                    </td>
+                </tr>
+            </template>
+        </VTable>
+
+        <VTPagination v-model:currentPage="currentPage" :total-pages="totalPages" :boundary-links="true"/>
+
+    </div>
 </template>
 
 <script>
@@ -24,7 +50,19 @@
     import { useStore } from "vuex";
     import axios from "axios";
     import Swal from 'sweetalert2'
+    import init from '../helpers/init'
     export default {
+        data: () => ({
+            filters: {
+                id: { value: '', keys: ['id'] },
+                nome: { value: '', keys: ['nome'] },
+                cpf: { value: '', keys: ['cpf'] },
+                email: { value: '', keys: ['email'] },
+            },
+            totalPages: 1,
+            currentPage: 1
+        }),
+
         setup() {
             const store = useStore();
 
@@ -35,27 +73,18 @@
                 var $this = this;
                 axios.get('/api/clientes/exclusao/' + cliente_id).then(function (response) {
                     Swal.fire('Feito!', 'Cliente excluido com sucesso!', 'success')
-                    store.commit("cliente/fetchClientes");
                 }).catch(function (error) {
-                    Swal.fire('Opa!', 'Erro ao excluir o cliente!', 'danger')
+                    Swal.fire('Opa!', 'Erro ao excluir o cliente!', 'error')
                     console.error(error);
-                    store.commit("cliente/fetchClientes");
                 });
+
+                init();
 
             }
 
             return {
-                sortBy: 'id',
-                sortDesc: false,
-                fields: [
-                    { key: 'id', label: 'ID', sortable: true },
-                    { key: 'nome', label: 'Nome', sortable: true },
-                    { key: 'cpf', label: 'CPF', sortable: true },
-                    { key: 'email', label: 'E-mail', sortable: true },
-                    { key: 'acao',label: 'Ação', sortable: false }
-                ],
                 clientes,
-                excluirCliente,
+                excluirCliente
             };
         },
     };

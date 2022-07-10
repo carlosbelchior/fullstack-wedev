@@ -18,14 +18,14 @@
                     <form method="POST" @submit.prevent="salvarCliente()">
 
                         <div class="row mb-3">
-                            <label class="col-md-3 col-form-label text-md-end">Nome</label>
+                            <label class="col-md-3 col-form-label text-md-end">Nome <span class="text-danger">*</span></label>
                             <div class="col-md-6">
                                 <input type="text" class="form-control" name="nome" required autocomplete="false" autofocus v-model="form.nome">
                             </div>
                         </div>
 
                         <div class="row mb-3">
-                            <label class="col-md-3 col-form-label text-md-end">CPF</label>
+                            <label class="col-md-3 col-form-label text-md-end">CPF <span class="text-danger">*</span></label>
                             <div class="col-md-6">
                                 <input type="text" class="form-control" name="cpf" required autocomplete="false" autofocus v-model="form.cpf">
                             </div>
@@ -34,13 +34,13 @@
                         <div class="row mb-3">
                             <label class="col-md-3 col-form-label text-md-end">E-mail</label>
                             <div class="col-md-6">
-                                <input type="email" class="form-control" name="email" required autocomplete="false" autofocus  v-model="form.email">
+                                <input type="email" class="form-control" name="email" autocomplete="false" autofocus v-model="form.email">
                             </div>
                         </div>
 
                         <div class="row mb-0">
-                            <div class="col-md-3 offset-md-5">
-                                <button type="submit" class="btn btn-primary">
+                            <div class="col-md-12 text-center">
+                                <button type="submit" class="btn btn-success">
                                     Salvar cliente
                                 </button>
                             </div>
@@ -115,8 +115,6 @@
                     }).catch(function (error) {
                         $this.form.erroValidacao = error.response.data.mensagem
                     });
-
-                console.log($this.form.sucessoAtualizacao);
 			}
 
             return {

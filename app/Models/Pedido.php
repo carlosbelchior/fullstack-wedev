@@ -9,8 +9,8 @@ class Pedido extends Model
 {
     use HasFactory;
     protected $table = 'pedidos';
-    protected $fillable = ['data_pedido'];
-    protected $hidden = ['cliente_id', 'created_at', 'updated_at'];
+    protected $fillable = ['data_pedido', 'cliente_id', 'status'];
+    protected $hidden = ['created_at', 'updated_at'];
 
     public function cliente()
     {
@@ -19,6 +19,6 @@ class Pedido extends Model
 
     public function produtos()
     {
-        return $this->belongsTo(PedidoProdutos::class);
+        return $this->belongsToMany(Produto::class, 'pedidos_produtos', 'pedido_id', 'produto_id')->withPivot(["pedido_id", 'produto_id', 'quantidade']);
     }
 }

@@ -2,20 +2,20 @@ import axios from "axios";
 
 const state = {
     loading: false,
-    produtos: [],
+    pedidos: [],
 };
 
 const getters = {
-    getProduto: (state) => (id) => {
-        return state.produtos.find(todo => todo.id === id)
+    getPedido: (state) => (id) => {
+        return state.pedidos.find(todo => todo.id === id)
     }
 }
 
 const mutations = {
-    async fetchProdutos(state) {
-        axios.get("/api/produtos/todos")
+    async fetchPedidos(state) {
+        axios.get("/api/pedidos/todos")
             .then((response) => {
-                state.produtos = response.data.produto;
+                state.pedidos = response.data.pedido;
             })
             .catch((err) => console.log(err));
     },

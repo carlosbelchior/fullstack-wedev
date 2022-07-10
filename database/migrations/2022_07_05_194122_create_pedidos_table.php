@@ -15,10 +15,12 @@ return new class extends Migration
     {
         Schema::create('pedidos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cliente_id')->onDelete('cascade')->constrained('clientes');
+            $table->foreignId('cliente_id')->constrained('clientes')->onDelete('cascade');;
             $table->date('data_pedido');
+            $table->integer('status')->default(1);
             $table->timestamps();
         });
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
