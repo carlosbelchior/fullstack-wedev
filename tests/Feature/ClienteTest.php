@@ -21,7 +21,7 @@ class ClienteTest extends TestCase
         $response = $this->post('/api/clientes/cadastro', [
             'nome' => 'Carlos Belchior',
             'cpf' => '46324748006',
-            'email' => 'carlosteste@gmail.com'
+            'email' => 'carlosteste3@gmail.com'
         ]);
         $response->assertStatus(200);
     }
