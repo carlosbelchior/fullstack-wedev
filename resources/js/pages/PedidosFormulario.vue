@@ -68,9 +68,6 @@
                             responsive="sm"
                             :fields="fields"
                             :items="form.produtos_pedido">
-                                <template #cell(id)="data">
-                                    {{ data.item.id }}
-                                </template>
 
                                 <template #cell(nome)="data">
                                     {{ data.item.nome }}
@@ -85,7 +82,7 @@
                                 </template>
 
                                 <template v-slot:cell(acao)="{ item }">
-                                    <button class="btn btn-danger btn-sm" @click="excluirProduto(item.id)">Excluir</button>
+                                    <button type="button" class="btn btn-danger btn-sm" @click="removeProduto(item)">Excluir</button>
                                 </template>
                             </b-table>
                         </div>
@@ -151,6 +148,11 @@
                     form.erro = true;
             })
 
+            function removeProduto(item) {
+                let produto = form.produtos_pedido.indexOf(item);
+                form.produtos_pedido.splice(produto, 1);
+            }
+
             function salvarCliente() {
 
                 var $this = this;
@@ -187,9 +189,9 @@
                 pedido,
                 route,
                 salvarCliente,
+                removeProduto,
                 fields: [
-                    { key: 'id', label: 'ID', sortable: true },
-                    { key: 'nome', label: 'Nome', sortable: true },
+                    { key: 'nome', label: 'Produto', sortable: true },
                     { key: 'cod_barras', label: 'Código de barras', sortable: true },
                     { key: 'quantidade', label: 'Quantidade', sortable: true },
                     { key: 'acao',label: 'Ação', sortable: false }

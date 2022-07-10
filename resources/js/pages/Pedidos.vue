@@ -26,7 +26,7 @@
 
             <template v-slot:cell(acao)="{ item }">
                 <router-link class="btn btn-primary btn-sm" :to="{ name: 'pedidos-formulario', params: { id: item.id }}">Editar</router-link>
-                <button class="btn btn-danger btn-sm" @click="excluirPedido(item.id)">Excluir</button>
+                <button class="btn btn-danger btn-sm mx-2" @click="excluirPedido(item.id)">Excluir</button>
             </template>
     </b-table>
   </div>
