@@ -1,38 +1,48 @@
 <template>
-  <div class="container">
+    <div class="container">
 
-    <n-data-table
-      ref="dataTableInst"
-      :columns="fields"
-      :data="clientes"
-      :pagination="pagination"
-    />
+        <router-link class="btn btn-primary mb-3" to="/clientes/gerenciar/">+ Novo cliente</router-link>
 
-    <router-link class="btn btn-primary mb-3" to="/clientes/gerenciar/">+ Novo cliente</router-link>
-    <b-table
-        primary-key="clientes.id"
-        striped
-        hover
-        responsive="sm"
-        :items="clientes"
-        :fields="fields"
-        :sort-by="sortBy"
-        :sort-desc="sortDesc"
-        id="my-table"
-        sort-icon-left>
-        <template v-slot:cell(acao)="{ item }">
-            <router-link class="btn btn-primary btn-sm" :to="{ name: 'clientes-formulario', params: { id: item.id }}">Editar</router-link>
-            <button class="btn btn-danger btn-sm mx-2" @click="excluirCliente(item.id)">Excluir</button>
-        </template>
-    </b-table>
+        <VTable class="table table-striped table-responsive table-bordered"
+        :data="clientes"
+        :filters="filters"
+        :page-size="20"
+        v-model:currentPage="currentPage"
+        @totalPagesChanged="totalPages = $event"
+        >
+            <template #head>
+                <tr>
+                    <VTh class="col-1" sortKey="id">ID</VTh>
+                    <VTh class="col-3" sortKey="nome">Nome</VTh>
+                    <VTh class="col-2" sortKey="cpf">CPF</VTh>
+                    <VTh class="col-4" sortKey="email">E-mail</VTh>
+                    <th class="col-2">Ação</th>
+                </tr>
+            </template>
+            <template #body="{rows}">
+                <tr>
+                    <td><input type="text" class="form-control form-control-sm" autocomplete="false" v-model="filters.id.value"/></td>
+                    <td><input type="text" class="form-control form-control-sm" autocomplete="false" v-model="filters.nome.value"/></td>
+                    <td><input type="text" class="form-control form-control-sm" autocomplete="false" v-model="filters.cpf.value"/></td>
+                    <td><input type="text" class="form-control form-control-sm" autocomplete="false" v-model="filters.email.value"/></td>
+                    <td></td>
+                </tr>
+                <tr v-for="row in rows" :key="row.id">
+                    <td>{{ row.id }}</td>
+                    <td>{{ row.nome }}</td>
+                    <td>{{ row.cpf }}</td>
+                    <td>{{ row.email }}</td>
+                    <td>
+                        <router-link class="btn btn-primary btn-sm" :to="{ name: 'clientes-formulario', params: { id: row.id }}">Editar</router-link>
+                        <button class="btn btn-danger btn-sm mx-2" @click="excluirCliente(row.id)">Excluir</button>
+                    </td>
+                </tr>
+            </template>
+        </VTable>
 
-    <b-pagination
-        v-model="currentPage"
-        :total-rows="50"
-        :per-page="5"
-        aria-controls="my-table"
-    ></b-pagination>
-  </div>
+        <VTPagination v-model:currentPage="currentPage" :total-pages="totalPages" :boundary-links="true"/>
+
+    </div>
 </template>
 
 <script>
@@ -42,6 +52,17 @@
     import Swal from 'sweetalert2'
     import init from '../helpers/init'
     export default {
+        data: () => ({
+            filters: {
+                id: { value: '', keys: ['id'] },
+                nome: { value: '', keys: ['nome'] },
+                cpf: { value: '', keys: ['cpf'] },
+                email: { value: '', keys: ['email'] },
+            },
+            totalPages: 1,
+            currentPage: 1
+        }),
+
         setup() {
             const store = useStore();
 
@@ -62,18 +83,8 @@
             }
 
             return {
-                sortBy: 'id',
-                sortDesc: false,
-                fields: [
-                    { key: 'id', label: 'ID', sortable: true },
-                    { key: 'nome', label: 'Nome', sortable: true },
-                    { key: 'cpf', label: 'CPF', sortable: true },
-                    { key: 'email', label: 'E-mail', sortable: true },
-                    { key: 'acao',label: 'Ação', sortable: false }
-                ],
                 clientes,
-                excluirCliente,
-                pagination: { pageSize: 20 }
+                excluirCliente
             };
         },
     };

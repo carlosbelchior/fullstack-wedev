@@ -2,41 +2,49 @@
   <div class="container">
 
     <router-link class="btn btn-primary mb-3" to="/pedidos/gerenciar/">+ Novo pedido</router-link>
-    <b-table
-        striped
-        hover
-        primary-key="{ item.id }"
-        responsive="sm"
-        :items="pedidos"
-        :fields="fields"
-        :sort-by.sync="sortBy"
-        :sort-desc.sync="sortDesc"
-        sort-icon-left>
-            <template #cell(id)="data">
-                {{ data.item.id }}
-            </template>
 
-            <template #cell(data_pedido)="data">
-                {{ moment(data.item.data_pedido).format('DD/MM/YYYY') }}
+    <VTable class="table table-striped table-responsive table-bordered"
+        :data="pedidos"
+        :filters="filters"
+        :page-size="20"
+        v-model:currentPage="currentPage"
+        @totalPagesChanged="totalPages = $event"
+        >
+            <template #head>
+                <tr>
+                    <VTh class="col-1" sortKey="id">ID</VTh>
+                    <VTh class="col-2" sortKey="nome">Data</VTh>
+                    <VTh class="col-4" sortKey="nome">Nome</VTh>
+                    <VTh class="col-1" sortKey="cpf">Total</VTh>
+                    <VTh class="col-2" sortKey="email">Status</VTh>
+                    <th class="col-2">Ação</th>
+                </tr>
             </template>
+            <template #body="{rows}">
+                <tr>
+                    <td><input type="text" class="form-control form-control-sm" autocomplete="false" v-model="filters.id.value"/></td>
+                    <td><input type="text" class="form-control form-control-sm" autocomplete="false" v-model="filters.data.value"/></td>
+                    <td><input type="text" class="form-control form-control-sm" autocomplete="false" v-model="filters.nome.value"/></td>
+                    <td><input type="text" class="form-control form-control-sm" autocomplete="false" v-model="filters.total.value"/></td>
+                    <td><input type="text" class="form-control form-control-sm" autocomplete="false" v-model="filters.status.value"/></td>
+                    <td></td>
+                </tr>
+                <tr v-for="row in rows" :key="row.id">
+                    <td>{{ row.id }}</td>
+                    <td>{{ moment(row.data_pedido).format('DD/MM/YYYY') }}</td>
+                    <td>{{ row.cliente.nome }} - <router-link target="_blank" class="" :to="{ name: 'clientes-formulario', params: { id: row.cliente_id }}">Ver cliente</router-link></td>
+                    <td>{{ totalPedido[row.id - 1].toFixed(2) }}</td>
+                    <td>{{ row.status === 1 ? 'Em aberto' : row.status === 2 ? 'Pago' : 'Cancelado' }}</td>
+                    <td>
+                        <router-link class="btn btn-primary btn-sm" :to="{ name: 'pedidos-formulario', params: { id: row.id }}">Editar</router-link>
+                        <button class="btn btn-danger btn-sm mx-2" @click="excluirPedido(row.id)">Excluir</button>
+                    </td>
+                </tr>
+            </template>
+        </VTable>
 
-            <template #cell(cliente)="data">
-                {{ data.value.nome }} - <router-link target="_blank" class="" :to="{ name: 'clientes-formulario', params: { id: data.item.cliente_id }}">Ver cliente</router-link>
-            </template>
+        <VTPagination v-model:currentPage="currentPage" :total-pages="totalPages" :boundary-links="true"/>
 
-            <template #cell(total)="data">
-                {{ totalPedido[data.item.id - 1].toFixed(2) }}
-            </template>
-
-            <template #cell(status)="data">
-                {{ data.item.status === 1 ? 'Em aberto' : data.item.status === 2 ? 'Pago' : 'Cancelado' }}
-            </template>
-
-            <template v-slot:cell(acao)="{ item }">
-                <router-link class="btn btn-primary btn-sm" :to="{ name: 'pedidos-formulario', params: { id: item.id }}">Editar</router-link>
-                <button class="btn btn-danger btn-sm mx-2" @click="excluirPedido(item.id)">Excluir</button>
-            </template>
-    </b-table>
   </div>
 </template>
 
@@ -47,6 +55,18 @@
     import Swal from 'sweetalert2'
     import moment from 'moment';
     export default {
+        data: () => ({
+            filters: {
+                id: { value: '', keys: ['id'] },
+                data: { value: '', keys: ['data'] },
+                nome: { value: '', keys: ['nome'] },
+                total: { value: '', keys: ['total'] },
+                status: { value: '', keys: ['status'] },
+            },
+            totalPages: 1,
+            currentPage: 1
+        }),
+
         setup() {
             const store = useStore();
 

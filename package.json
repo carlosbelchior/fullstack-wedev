@@ -21,6 +21,7 @@
         "v-money3": "^3.21.0",
         "vue": "^3.2.37",
         "vue-router": "^4.1.1",
+        "vuejs-smart-table": "^1.0.0-beta.6",
         "vuex": "^4.0.2"
     }
 }
