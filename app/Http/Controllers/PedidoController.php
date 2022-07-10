@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePedidoRequest;
 use App\Http\Requests\StoreProdutoRequest;
 use App\Http\Requests\UpdateProdutoRequest;
 use App\Models\Pedido;
+use App\Models\PedidoProduto;
 use App\Models\Produto;
+use Exception;
+use Illuminate\Support\Facades\DB;
 
 class PedidoController extends Controller
 {
@@ -19,33 +23,29 @@ class PedidoController extends Controller
     }
 
     /**
-     * Página de formulário de cadastro e edição
-     */
-    public function formulario()
-    {
-        return view('Produtos.formulario');
-    }
-
-    /**
      * API de cadastro de Produto
      */
-    public function cadastro(StoreProdutoRequest $request)
+    public function cadastro(StorePedidoRequest $request)
     {
-        // Salva o Produto
-        $produto = Produto::create($request->validated());
-        if($produto)
-            return response()->json(['mensagem' => 'Produto cadastrado com sucesso', 'tipo' => 'sucesso'], 200);
+        DB::beginTransaction();
+
+        try {
+            $pedido = Pedido::create($request->validated());
+            $produtos = $request->validated('produtos_pedido');
+            for($i = 0; $i < count($produtos); $i++)
+                PedidoProduto::create(['pedido_id' => $pedido->id, 'produto_id' => $produtos[$i]['pivot']['produto_id'], 'quantidade' => $produtos[$i]['pivot']['quantidade']]);
+
+            DB::commit();
+
+            return response()->json(['mensagem' => 'Pedido cadastrado com sucesso', 'tipo' => 'sucesso'], 200);
+
+        } catch(Exception $e) {
+            DB::rollback();
+            return response()->json(['mensagem' => 'Ocorreu um erro ao salvar o pedido, nenhum dado será salvo!', 'tipo' => 'geral'], 400);
+        }
 
         // Erro geral
         return response()->json(['mensagem' => 'Ocorreu um erro ao salvar o Produto, verifique sua conexão e tente novamente!', 'tipo' => 'geral'], 400);
-    }
-
-    /**
-     * Página de exiibição do Produto
-     */
-    public function detalhes()
-    {
-       return view('Produtos.Produto');
     }
 
     /**
@@ -66,8 +66,8 @@ class PedidoController extends Controller
      */
     public function atualizar(UpdateProdutoRequest $request, $id)
     {
-        $produto =  Produto::find($id);
-        if(!$produto)
+        $pedido =  Pedido::find($id);
+        if(!$pedido)
             return response()->json(['mensagem' => 'Produto não encontrado.', 'tipo' => 'geral'], 400);
 
         // Atualiza o Produto

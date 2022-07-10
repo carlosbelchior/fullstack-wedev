@@ -24,6 +24,7 @@
     import { useStore } from "vuex";
     import axios from "axios";
     import Swal from 'sweetalert2'
+    import init from '../helpers/init';
     export default {
         setup() {
             const store = useStore();
@@ -42,6 +43,7 @@
                     store.commit("produto/fetchProdutos");
                 });
 
+                init();
             }
 
             return {

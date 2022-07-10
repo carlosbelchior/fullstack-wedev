@@ -17,14 +17,6 @@ class ClienteController extends Controller
     }
 
     /**
-     * Página de formulário de cadastro e edição
-     */
-    public function formulario()
-    {
-        return view('clientes.formulario');
-    }
-
-    /**
      * API de cadastro de cliente
      */
     public function cadastro(StoreClienteRequest $request)
@@ -36,14 +28,6 @@ class ClienteController extends Controller
 
         // Erro geral
         return response()->json(['mensagem' => 'Ocorreu um erro ao salvar o cliente, verifique sua conexão e tente novamente!', 'tipo' => 'geral'], 400);
-    }
-
-    /**
-     * Página de exiibição do cliente
-     */
-    public function detalhes()
-    {
-       return view('clientes.cliente');
     }
 
     /**

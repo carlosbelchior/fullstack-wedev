@@ -18,14 +18,6 @@ class ProdutoController extends Controller
     }
 
     /**
-     * Página de formulário de cadastro e edição
-     */
-    public function formulario()
-    {
-        return view('Produtos.formulario');
-    }
-
-    /**
      * API de cadastro de Produto
      */
     public function cadastro(StoreProdutoRequest $request)
@@ -37,14 +29,6 @@ class ProdutoController extends Controller
 
         // Erro geral
         return response()->json(['mensagem' => 'Ocorreu um erro ao salvar o Produto, verifique sua conexão e tente novamente!', 'tipo' => 'geral'], 400);
-    }
-
-    /**
-     * Página de exiibição do Produto
-     */
-    public function detalhes()
-    {
-       return view('Produtos.Produto');
     }
 
     /**

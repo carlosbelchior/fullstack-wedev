@@ -153,27 +153,27 @@
                 form.produtos_pedido.splice(produto, 1);
             }
 
-            function salvarCliente() {
+            function salvarPedido() {
 
                 var $this = this;
                 form.erroValidacao = null;
                 form.erro = false;
 
                 if(!this.form.id)
-                    axios.post('/api/clientes/cadastro', this.form).then(function (response) {
+                    axios.post('/api/pedidos/cadastro', this.form).then(function (response) {
                         $this.form.id = '';
-                        $this.form.nome = '';
-                        $this.form.cpf = '';
-                        $this.form.email = '';
-                        Swal.fire('Feito!', 'Cliente cadastrado com sucesso!', 'success')
-                        store.commit("cliente/fetchClientes");
+                        $this.form.cliente_id = '';
+                        $this.form.data_pedido = '';
+                        $this.form.produtos_pedido = [];
+                        Swal.fire('Feito!', 'Pedido cadastrado com sucesso!', 'success')
+                        store.commit("pedido/fetchPedidos");
                     }).catch(function (error) {
                         $this.form.erroValidacao = error.response.data.mensagem
                     });
                 else
-                    axios.post('/api/clientes/atualizar/' + this.form.id, this.form).then(function (response) {
-                        Swal.fire('Feito!', 'Cliente atualizado com sucesso!', 'success')
-                        store.commit("cliente/fetchClientes");
+                    axios.post('/api/pedidos/atualizar/' + this.form.id, this.form).then(function (response) {
+                        Swal.fire('Feito!', 'Pedido atualizado com sucesso!', 'success')
+                        store.commit("pedido/fetchPedidos");
                     }).catch(function (error) {
                         $this.form.erroValidacao = error.response.data.mensagem
                     });
@@ -188,7 +188,7 @@
                 produtos,
                 pedido,
                 route,
-                salvarCliente,
+                salvarPedido,
                 removeProduto,
                 fields: [
                     { key: 'nome', label: 'Produto', sortable: true },
