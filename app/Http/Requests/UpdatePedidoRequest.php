@@ -30,7 +30,8 @@ class UpdatePedidoRequest extends FormRequest
         return [
             'cliente_id' => 'required|integer',
             'data_pedido' => 'required|date',
-            'produtos_pedido' => 'required|array|min:1'
+            'produtos_pedido' => 'required|array|min:1',
+            'status' => 'required|integer|between:1,3'
         ];
     }
 

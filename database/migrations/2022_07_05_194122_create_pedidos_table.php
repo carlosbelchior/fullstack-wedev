@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('cliente_id')->constrained('clientes')->onDelete('cascade');;
             $table->date('data_pedido');
+            $table->integer('status')->default(1);
             $table->timestamps();
         });
         Schema::enableForeignKeyConstraints();

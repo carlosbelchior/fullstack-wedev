@@ -9,8 +9,6 @@
 
             <b-alert show dismissible variant="danger" v-if="form.erroValidacao" v-for="erro in form.erroValidacao">{{ erro[0] }}</b-alert>
 
-            {{ form }}
-
             <div class="card">
                 <div class="card-header">
                     Gerenciar pedido
@@ -33,6 +31,17 @@
                             <label class="col-md-3 col-form-label text-md-end">Data <span class="text-danger">*</span></label>
                             <div class="col-md-6">
                                 <input type="date" class="form-control" name="nome" required autocomplete="false" autofocus v-model="form.data_pedido">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label class="col-md-3 col-form-label text-md-end">Status <span class="text-danger">*</span></label>
+                            <div class="col-md-6">
+                                <select class="form-select" name="cliente" required v-model="form.status">
+                                    <option value="1">Em aberto</option>
+                                    <option value="2">Pago</option>
+                                    <option value="3">Cancelado</option>
+                                </select>
                             </div>
                         </div>
 
@@ -65,7 +74,7 @@
                             </div>
                         </div>
 
-                        <div class="row mb-5">
+                        <div class="row mb-3">
                             <b-table
                             striped
                             hover
@@ -74,15 +83,23 @@
                             :items="form.produtos_pedido">
 
                                 <template #cell(nome)="data">
-                                    {{ data.item.nome }}
+                                    {{ data.item.nome }}  - <router-link target="_blank" class="" :to="{ name: 'produtos-formulario', params: { id: data.item.id }}">Ver produto</router-link>
                                 </template>
 
                                 <template #cell(cod_barras)="data">
                                     {{ data.item.cod_barras }}
                                 </template>
 
+                                <template #cell(valor)="data">
+                                    {{ data.item.valor_unitario }}
+                                </template>
+
                                 <template #cell(quantidade)="data">
                                     {{ data.item.pivot.quantidade }}
+                                </template>
+
+                                <template #cell(total)="data">
+                                    {{ (data.item.pivot.quantidade * data.item.valor_unitario).toFixed(2) }}
                                 </template>
 
                                 <template v-slot:cell(acao)="{ item }">
@@ -91,8 +108,14 @@
                             </b-table>
                         </div>
 
+                        <div class="row mb-5">
+                            <div class="col-md-12 text-center">
+                                <b>Total do pedido: {{ totalPedido }}</b>
+                            </div>
+                        </div>
+
                         <div class="row mb-0">
-                            <div class="col-md-3 offset-md-5">
+                            <div class="col-md-12 text-center">
                                 <button type="submit" class="btn btn-success">
                                     Salvar pedido
                                 </button>
@@ -122,8 +145,9 @@
 
             const form = reactive({
                 id: '',
-                data_pedido: '',
                 cliente_id: '',
+                data_pedido: '',
+                status: 1,
                 produtos_pedido: [],
                 erro: false,
                 erroValidacao: null
@@ -137,6 +161,14 @@
             const clientes = computed(() => store.state.cliente.clientes);
             const produtos = computed(() => store.state.produto.produtos);
 
+            const totalPedido = computed(() => {
+                let t = 0;
+                form.produtos_pedido.map(function(value, key){
+                    t += value.valor_unitario * value.pivot.quantidade;
+                });
+                return t;
+            });
+
             const pedido = computed(() => {
                 form.id = '';
                 form.data_pedido = '';
@@ -149,8 +181,9 @@
                 {
                     form.id = store.getters['pedido/getPedido'](parseInt(route.params.id)).id;
                     form.cliente_id = store.getters['pedido/getPedido'](parseInt(route.params.id)).cliente_id;
-                    form.produtos_pedido = store.getters['pedido/getPedido'](parseInt(route.params.id)).produtos;
                     form.data_pedido = store.getters['pedido/getPedido'](parseInt(route.params.id)).data_pedido;
+                    form.status = store.getters['pedido/getPedido'](parseInt(route.params.id)).status;
+                    form.produtos_pedido = store.getters['pedido/getPedido'](parseInt(route.params.id)).produtos;
                 }
                 else
                     form.erro = true;
@@ -174,6 +207,7 @@
                             {
                                 "id": prod_cad.id,
                                 "nome": prod_cad.nome,
+                                "valor_unitario": prod_cad.valor_unitario,
                                 "cod_barras": prod_cad.cod_barras,
                                 "pivot": {
                                     "produto_id": formProduto.produto_id,
@@ -222,7 +256,9 @@
                 fields: [
                     { key: 'nome', label: 'Produto', sortable: true },
                     { key: 'cod_barras', label: 'Código de barras', sortable: true },
+                    { key: 'valor_unitario', label: 'Valor', sortable: true },
                     { key: 'quantidade', label: 'Quantidade', sortable: true },
+                    { key: 'total', label: 'Total', sortable: true },
                     { key: 'acao',label: 'Ação', sortable: false }
                 ],
                 clientes,
@@ -232,7 +268,8 @@
                 adicionaProduto,
                 removeProduto,
                 salvarPedido,
-                formProduto
+                formProduto,
+                totalPedido
             };
         },
     };

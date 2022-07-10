@@ -24,6 +24,14 @@
                 {{ data.value.nome }} - <router-link target="_blank" class="" :to="{ name: 'clientes-formulario', params: { id: data.item.cliente_id }}">Ver cliente</router-link>
             </template>
 
+            <template #cell(total)="data">
+                {{ totalPedido[data.item.id - 1] }}
+            </template>
+
+            <template #cell(status)="data">
+                {{ data.item.status === 1 ? 'Em aberto' : data.item.status === 2 ? 'Pago' : 'Cancelado' }}
+            </template>
+
             <template v-slot:cell(acao)="{ item }">
                 <router-link class="btn btn-primary btn-sm" :to="{ name: 'pedidos-formulario', params: { id: item.id }}">Editar</router-link>
                 <button class="btn btn-danger btn-sm mx-2" @click="excluirPedido(item.id)">Excluir</button>
@@ -58,6 +66,17 @@
 
             }
 
+            const totalPedido = computed(() => {
+                let t = [];
+                store.state.pedido.pedidos.map(function(value, key){
+                    t[key] = 0;
+                    value.produtos.map(function(v, k){
+                        t[key] += parseFloat(v.valor_unitario) * parseFloat(v.pivot.quantidade);
+                    });
+                });
+                return t;
+            });
+
             return {
                 sortBy: 'id',
                 sortDesc: false,
@@ -65,11 +84,14 @@
                     { key: 'id', label: 'ID', sortable: true },
                     { key: 'data_pedido', label: 'Data', sortable: true },
                     { key: 'cliente', label: 'Cliente', sortable: true },
+                    { key: 'total', label: 'Total', sortable: true },
+                    { key: 'status', label: 'Status', sortable: true },
                     { key: 'acao',label: 'Ação', sortable: false }
                 ],
                 pedidos,
                 excluirPedido,
-                moment
+                moment,
+                totalPedido
             };
         },
     };
