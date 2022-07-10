@@ -115,8 +115,6 @@
                     }).catch(function (error) {
                         $this.form.erroValidacao = error.response.data.mensagem
                     });
-
-                console.log($this.form.sucessoAtualizacao);
 			}
 
             return {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePedidoRequest;
 use App\Http\Requests\StoreProdutoRequest;
+use App\Http\Requests\UpdatePedidoRequest;
 use App\Http\Requests\UpdateProdutoRequest;
 use App\Models\Pedido;
 use App\Models\PedidoProduto;
@@ -54,28 +55,46 @@ class PedidoController extends Controller
     public function encontrar($id)
     {
         // Busca o Produto
-        if(Produto::find($id))
-            return response()->json(['Produto' => Produto::with('pedidos')->find($id), 'tipo' => 'dados'], 200);
+        if(Pedido::find($id))
+            return response()->json(['pedido' => Pedido::with(['cliente', 'produtos'])->find($id), 'tipo' => 'dados'], 200);
 
         // Erro geral
-        return response()->json(['mensagem' => 'Produto não encontrado.', 'tipo' => 'geral'], 400);
+        return response()->json(['mensagem' => 'Pedido não encontrado.', 'tipo' => 'geral'], 400);
     }
 
     /**
      * API de atualização do Produto
      */
-    public function atualizar(UpdateProdutoRequest $request, $id)
+    public function atualizar(UpdatePedidoRequest $request, $id)
     {
-        $pedido =  Pedido::find($id);
-        if(!$pedido)
-            return response()->json(['mensagem' => 'Produto não encontrado.', 'tipo' => 'geral'], 400);
 
-        // Atualiza o Produto
-        if($produto->update(array_filter($request->validated())))
-            return response()->json(['mensagem' => 'Produto atualizado com sucesso.', 'tipo' => 'sucesso'], 200);
+        $pedido = Pedido::find($id);
+
+        if(!$pedido)
+            return response()->json(['mensagem' => 'Pedido não encontrado.', 'tipo' => 'geral'], 200);
+
+        DB::beginTransaction();
+
+        try {
+            $pedido->update($request->validated());
+
+            PedidoProduto::where('pedido_id', $id)->delete();
+
+            $produtos = $request->validated('produtos_pedido');
+            for($i = 0; $i < count($produtos); $i++)
+                PedidoProduto::create(['pedido_id' => $pedido->id, 'produto_id' => $produtos[$i]['pivot']['produto_id'], 'quantidade' => $produtos[$i]['pivot']['quantidade']]);
+
+            DB::commit();
+
+            return response()->json(['mensagem' => 'Pedido cadastrado com sucesso', 'tipo' => 'sucesso'], 200);
+
+        } catch(Exception $e) {
+            DB::rollback();
+            return response()->json(['mensagem' => 'Ocorreu um erro ao salvar o pedido, nenhum dado será salvo!', 'tipo' => 'geral'], 400);
+        }
 
         // Erro geral
-        return response()->json(['mensagem' => 'Ocorreu um erro ao editar o Produto, verifique sua conexão e tente novamente.', 'tipo' => 'geral'], 400);
+        return response()->json(['mensagem' => 'Ocorreu um erro ao salvar o Produto, verifique sua conexão e tente novamente!', 'tipo' => 'geral'], 400);
     }
 
     /**

@@ -34,6 +34,20 @@ class UpdatePedidoRequest extends FormRequest
         ];
     }
 
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'cliente_id.required' => 'Você deve informar o cliente.',
+            'produtos_pedido.required' => 'Você deve informar os produtos deste pedido.',
+            'produtos_pedido.min' => 'O pedido deve ter pelo menos 1 produto.',
+        ];
+    }
+
     protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json([

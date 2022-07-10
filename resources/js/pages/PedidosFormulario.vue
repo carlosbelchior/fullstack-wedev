@@ -150,7 +150,6 @@
                     form.id = store.getters['pedido/getPedido'](parseInt(route.params.id)).id;
                     form.cliente_id = store.getters['pedido/getPedido'](parseInt(route.params.id)).cliente_id;
                     form.produtos_pedido = store.getters['pedido/getPedido'](parseInt(route.params.id)).produtos;
-                    console.log(store.getters['pedido/getPedido'](parseInt(route.params.id)).produtos);
                     form.data_pedido = store.getters['pedido/getPedido'](parseInt(route.params.id)).data_pedido;
                 }
                 else
@@ -183,25 +182,6 @@
                             }
                         );
                     }
-
-
-
-                    /*this.$http.get('/partes/buscar/' + id_pessoa).then(response => {
-                        if(!i && response.body.tipo === 'Cliente')
-                            Swal.fire('Opa!', 'Este produto já foi adicionado!', 'error')
-                        else
-                        {
-                            // Adiciona a pessoa na lista
-                            this.processo.autores.push(response.body);
-                            // Redefine o valor do select
-                            this.autor = '';
-                            // Remove a pessoa adicionada da lista de pessoas disponiveis
-                            let i = this.pessoas.map(item => item.id).indexOf(id_pessoa);
-                            this.pessoas.splice(i, 1);
-                        }
-                    }, response => {
-                        console.log(response);
-                    });*/
                 }
             }
 
@@ -234,8 +214,6 @@
                     }).catch(function (error) {
                         $this.form.erroValidacao = error.response.data.mensagem
                     });
-
-                console.log($this.form.sucessoAtualizacao);
 			}
 
             return {
