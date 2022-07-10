@@ -110,7 +110,7 @@
 
                         <div class="row mb-5">
                             <div class="col-md-12 text-center">
-                                <b>Total do pedido: {{ totalPedido }}</b>
+                                <b>Total do pedido: {{ totalPedido.toFixed(2) }}</b>
                             </div>
                         </div>
 
