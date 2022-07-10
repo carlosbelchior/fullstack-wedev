@@ -25,7 +25,7 @@
             </template>
 
             <template #cell(total)="data">
-                {{ totalPedido[data.item.id - 1] }}
+                {{ totalPedido[data.item.id - 1].toFixed(2) }}
             </template>
 
             <template #cell(status)="data">
