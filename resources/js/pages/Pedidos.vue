@@ -33,7 +33,7 @@
                     <td>{{ row.id }}</td>
                     <td>{{ moment(row.data_pedido).format('DD/MM/YYYY') }}</td>
                     <td>{{ row.cliente.nome }} - <router-link target="_blank" class="" :to="{ name: 'clientes-formulario', params: { id: row.cliente_id }}">Ver cliente</router-link></td>
-                    <td>{{ totalPedido[row.id - 1].toFixed(2) }}</td>
+                    <td>{{ totalPedido[row.id].toFixed(2) }}</td>
                     <td>{{ row.status === 1 ? 'Em aberto' : row.status === 2 ? 'Pago' : 'Cancelado' }}</td>
                     <td>
                         <router-link class="btn btn-primary btn-sm" :to="{ name: 'pedidos-formulario', params: { id: row.id }}">Editar</router-link>
@@ -74,13 +74,11 @@
 
             function excluirPedido(pedido_id) {
 
-                var $this = this;
                 axios.get('/api/pedidos/exclusao/' + pedido_id).then(function (response) {
                     Swal.fire('Feito!', 'Pedido excluido com sucesso!', 'success')
                     store.commit("pedido/fetchPedidos");
                 }).catch(function (error) {
                     Swal.fire('Opa!', 'Erro ao excluir o pedido!', 'error')
-                    console.error(error);
                     store.commit("pedido/fetchPedidos");
                 });
 
@@ -88,12 +86,14 @@
 
             const totalPedido = computed(() => {
                 let t = [];
-                store.state.pedido.pedidos.map(function(value, key){
-                    t[key] = 0;
-                    value.produtos.map(function(v, k){
-                        t[key] += parseFloat(v.valor_unitario) * parseFloat(v.pivot.quantidade);
+                if(store.state.pedido.pedidos.length > 0)
+                    store.state.pedido.pedidos.map(function(value, key)
+                    {
+                        t[value.id] = 0;
+                        value.produtos.map(function(v, k){
+                            t[value.id] += parseFloat(v.valor_unitario) * parseFloat(v.pivot.quantidade);
+                        });
                     });
-                });
                 return t;
             });
 

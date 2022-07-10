@@ -50,7 +50,6 @@
     import { useStore } from "vuex";
     import axios from "axios";
     import Swal from 'sweetalert2'
-    import init from '../helpers/init'
     export default {
         data: () => ({
             filters: {
@@ -71,14 +70,18 @@
             function excluirCliente(cliente_id) {
 
                 var $this = this;
-                axios.get('/api/clientes/exclusao/' + cliente_id).then(function (response) {
+                let resposta = axios.get('/api/clientes/exclusao/' + cliente_id).then(function (response) {
                     Swal.fire('Feito!', 'Cliente excluido com sucesso!', 'success')
+                    store.commit("cliente/fetchClientes");
+                    store.commit("pedido/fetchPedidos");
                 }).catch(function (error) {
                     Swal.fire('Opa!', 'Erro ao excluir o cliente!', 'error')
                     console.error(error);
+                    store.commit("cliente/fetchClientes");
+                    store.commit("pedido/fetchPedidos");
                 });
 
-                init();
+                console.log(resposta)
 
             }
 

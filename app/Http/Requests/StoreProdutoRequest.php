@@ -28,7 +28,19 @@ class StoreProdutoRequest extends FormRequest
         return [
             'nome' => 'required|min:3',
             'cod_barras' => 'required|unique:produtos|min:20|max:20',
-            'valor_unitario' => 'required|numeric'
+            'valor_unitario' => 'required|numeric|min:0.01'
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'valor_unitario.min' => 'O valor minimo do produto deve ser 0.01',
         ];
     }
 

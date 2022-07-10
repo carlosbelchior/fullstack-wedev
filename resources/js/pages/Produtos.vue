@@ -50,7 +50,6 @@
     import { useStore } from "vuex";
     import axios from "axios";
     import Swal from 'sweetalert2'
-    import init from '../helpers/init';
     export default {
         data: () => ({
             filters: {
@@ -74,13 +73,12 @@
                 axios.get('/api/produtos/exclusao/' + produto_id).then(function (response) {
                     Swal.fire('Feito!', 'Produto excluido com sucesso!', 'success')
                     store.commit("produto/fetchProdutos");
+                    store.commit("pedido/fetchPedidos");
                 }).catch(function (error) {
                     Swal.fire('Opa!', 'Erro ao excluir o produto!', 'danger')
-                    console.error(error);
                     store.commit("produto/fetchProdutos");
+                    store.commit("pedido/fetchPedidos");
                 });
-
-                init();
             }
 
             return {

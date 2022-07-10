@@ -36,7 +36,19 @@ class UpdateProdutoRequest extends FormRequest
                 'max:20',
                 Rule::unique('produtos', 'cod_barras')->where(fn ($query) => $query->where('id', '!=', $id))
             ],
-            'valor_unitario' => 'required|numeric'
+            'valor_unitario' => 'required|numeric|min:0.01'
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'valor_unitario.min' => 'O valor minimo do produto deve ser 0.01',
         ];
     }
 
