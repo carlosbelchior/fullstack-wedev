@@ -29,7 +29,7 @@ class ClienteTest extends TestCase
     /** @test */
     public function ok_find_cliente()
     {
-        $response = $this->get('/api/clientes/inserir/1');
+        $response = $this->get('/api/clientes/encontrar/1');
         $response->assertStatus(200);
     }
 
@@ -81,27 +81,27 @@ class ClienteTest extends TestCase
     /** @test */
     public function error405_find_cliente()
     {
-        // Cliente não encontrado
         $response = $this->post('/api/clientes/encontrar/10000000');
         $response->assertStatus(405);
     }
 
     /** @test */
-    public function error_update_cliente()
+    public function error400_update_cliente()
     {
         $response = $this->post('/api/clientes/atualizar/1', [
             'nome' => 'Carlos Belchior',
             // CPF fake válido,
-            'cpf' => '11950742040',
+            'cpf' => '12345678932',
             'email' => 'test1@faker.test'
         ]);
-        $response->assertStatus(200);
+        $response->assertStatus(400);
     }
 
     /** @test */
     public function error_delete_cliente()
     {
-        $response = $this->get('/api/clientes/exclusao/1');
-        $response->assertStatus(200);
+        // cliente não encontrado
+        $response = $this->get('/api/clientes/exclusao/100000');
+        $response->assertStatus(400);
     }
 }
