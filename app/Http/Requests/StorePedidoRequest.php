@@ -40,8 +40,9 @@ class StorePedidoRequest extends FormRequest
     public function messages()
     {
         return [
-            'produtos_pedido.required' => 'Você deve informar os produtos deste pedido',
-            'produtos_pedido.min' => 'O pedido deve ter pelo menos 1 produto',
+            'cliente_id.required' => 'Você deve informar o cliente.',
+            'produtos_pedido.required' => 'Você deve informar os produtos deste pedido.',
+            'produtos_pedido.min' => 'O pedido deve ter pelo menos 1 produto.',
         ];
     }
 

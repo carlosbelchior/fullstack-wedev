@@ -9,6 +9,8 @@
 
             <b-alert show dismissible variant="danger" v-if="form.erroValidacao" v-for="erro in form.erroValidacao">{{ erro[0] }}</b-alert>
 
+            {{ form }}
+
             <div class="card">
                 <div class="card-header">
                     Gerenciar pedido
@@ -20,28 +22,30 @@
                         <div class="row mb-3">
                             <label class="col-md-3 col-form-label text-md-end">Cliente <span class="text-danger">*</span></label>
                             <div class="col-md-6">
-                                <select class="form-select" name="cliente" v-model="form.cliente_id">
+                                <select class="form-select" name="cliente" required v-model="form.cliente_id">
                                     <option value="">Selecione um cliente</option>
                                     <option v-for="cli in clientes" :value="cli.id">{{ cli.nome }}</option>
                                 </select>
                             </div>
                         </div>
 
-                        <div class="row mb-5">
+                        <div class="row mb-4">
                             <label class="col-md-3 col-form-label text-md-end">Data <span class="text-danger">*</span></label>
                             <div class="col-md-6">
                                 <input type="date" class="form-control" name="nome" required autocomplete="false" autofocus v-model="form.data_pedido">
                             </div>
                         </div>
 
+                        <hr class="mb-4" style="height:5px">
+
                         <div class="row mb-3">
                             <div class="col-sm-5">
                                 <div class="form-group row">
                                     <label class="col-sm-3 col-form-label text-md-end">Produto <span class="text-danger">*</span></label>
                                     <div class="col-sm-9">
-                                        <select class="form-select" name="produto">
+                                        <select class="form-select" name="produto" v-model="formProduto.produto_id">
                                             <option value="">Selecione um produto</option>
-                                            <option v-for="prod in produtos" value="{{ prod.id }}">{{ prod.nome }}</option>
+                                            <option v-for="prod in produtos" :value="prod.id">{{ prod.nome }}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -50,12 +54,12 @@
                                 <div class="form-group row">
                                     <label class="col-md-6 col-form-label text-md-end">Quantidade <span class="text-danger">*</span></label>
                                     <div class="col-md-6">
-                                        <input type="number" min="1" class="form-control" name="quantidade" autocomplete="false" autofocus>
+                                        <input type="number" min="1" class="form-control" name="quantidade" autocomplete="false" autofocus  v-model="formProduto.quantidade">
                                     </div>
                                 </div>
                             </div>
                             <div class="col-sm-3 text-md-end">
-                                <button type="button" class="btn btn-primary">
+                                <button type="button" class="btn btn-primary" @click="adicionaProduto()">
                                     Adicionar produto
                                 </button>
                             </div>
@@ -89,7 +93,7 @@
 
                         <div class="row mb-0">
                             <div class="col-md-3 offset-md-5">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-success">
                                     Salvar pedido
                                 </button>
                             </div>
@@ -125,6 +129,11 @@
                 erroValidacao: null
             })
 
+            const formProduto = reactive({
+                produto_id: '',
+                quantidade: 1
+            })
+
             const clientes = computed(() => store.state.cliente.clientes);
             const produtos = computed(() => store.state.produto.produtos);
 
@@ -147,6 +156,54 @@
                 else
                     form.erro = true;
             })
+
+            function adicionaProduto() {
+                if(formProduto.produto_id === '')
+                    Swal.fire('Opa!', 'Selecione um produto para adicioná-lo na lista!', 'error')
+                else
+                {
+                    // Verifica se já foi adicionado um produto igual
+                    let item_lista = form.produtos_pedido.map(p => p.nome).indexOf(
+                        store.getters['produto/getProduto'](parseInt(formProduto.produto_id)).nome
+                    );
+                    if(!item_lista)
+                        Swal.fire('Opa!', 'Este produto já foi adicionado!', 'error')
+                    else
+                    {
+                        let prod_cad = store.getters['produto/getProduto'](parseInt(formProduto.produto_id));
+                        form.produtos_pedido.push(
+                            {
+                                "id": prod_cad.id,
+                                "nome": prod_cad.nome,
+                                "cod_barras": prod_cad.cod_barras,
+                                "pivot": {
+                                    "produto_id": formProduto.produto_id,
+                                    "quantidade": formProduto.quantidade,
+                                }
+                            }
+                        );
+                    }
+
+
+
+                    /*this.$http.get('/partes/buscar/' + id_pessoa).then(response => {
+                        if(!i && response.body.tipo === 'Cliente')
+                            Swal.fire('Opa!', 'Este produto já foi adicionado!', 'error')
+                        else
+                        {
+                            // Adiciona a pessoa na lista
+                            this.processo.autores.push(response.body);
+                            // Redefine o valor do select
+                            this.autor = '';
+                            // Remove a pessoa adicionada da lista de pessoas disponiveis
+                            let i = this.pessoas.map(item => item.id).indexOf(id_pessoa);
+                            this.pessoas.splice(i, 1);
+                        }
+                    }, response => {
+                        console.log(response);
+                    });*/
+                }
+            }
 
             function removeProduto(item) {
                 let produto = form.produtos_pedido.indexOf(item);
@@ -184,18 +241,20 @@
             return {
                 store,
                 form,
-                clientes,
-                produtos,
-                pedido,
-                route,
-                salvarPedido,
-                removeProduto,
                 fields: [
                     { key: 'nome', label: 'Produto', sortable: true },
                     { key: 'cod_barras', label: 'Código de barras', sortable: true },
                     { key: 'quantidade', label: 'Quantidade', sortable: true },
                     { key: 'acao',label: 'Ação', sortable: false }
                 ],
+                clientes,
+                produtos,
+                pedido,
+                route,
+                adicionaProduto,
+                removeProduto,
+                salvarPedido,
+                formProduto
             };
         },
     };
